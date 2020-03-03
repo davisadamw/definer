@@ -3,5 +3,7 @@
 export("%>%")
 export(def_prep)
 export(def_recode)
+export(def_recode_all)
+export(def_recode_pick)
 importFrom(dplyr,.data)
 importFrom(magrittr,"%>%")
