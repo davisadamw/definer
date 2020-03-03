@@ -19,5 +19,9 @@ BugReports: https://github.com/davisadamw/definer/issues
 Suggests: 
     testthat (>= 2.1.0)
 Imports: 
-    magrittr
+    magrittr,
+    dplyr,
+    tidyr,
+    tibble,
+    purrr
 RoxygenNote: 7.0.2
