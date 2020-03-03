@@ -1,5 +1,5 @@
 Package: definer
-Title: Makes it easy to apply field maps / survey data definitions to datasets with integer coding.
+Title: Makes it easy to apply field maps / survey data definitions to datasets with integer coding
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Adam",
