@@ -1,6 +1,5 @@
 #' @keywords internal
 #'
-#' @importFrom magrittr %>%
 #' @importFrom dplyr .data
 "_PACKAGE"
 
