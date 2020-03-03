@@ -11,6 +11,9 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+
+library(tidyverse)
+library(definer)
 ```
 
 # definer
@@ -30,5 +33,22 @@ devtools::install_github("davisadamw/definer")
 ```
 ## Example
 
-SKELETON: update this once you've got functions in place
+A very basic example of what this does:
+```{r}
+def_list <- tibble(variable   = c('A', 'A', 'B', 'B', 'C'),
+                   value      = c(1,   2,   1,   2,   1),
+                   definition = c('cat', 'dog', 'fred', 'george', 'lonely')) %>%
+  def_prep(variable, value, definition, drop_solos = FALSE)
+
+source_data <- tibble(ID = c('A1', 'A2', 'A3'),
+                      A  = c(1, 1, 2),
+                      B  = c(2, 1, 2),
+                      C  = c(1, 1, 1))
+
+updated_values <- def_recode_all(source_data, def_list)
+
+left_join(source_data, updated_values, 
+          by = 'ID', suffix = c('_old', '_new'))
+```
+
 
