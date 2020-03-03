@@ -4,16 +4,39 @@
 \alias{def_recode_all}
 \title{Recode all columns in a dataset using a definitions list}
 \usage{
-def_recode_all(values_tbl, definitions)
+def_recode_all(values_tbl, def_list, .default = NULL, .missing = NULL)
 }
 \arguments{
-\item{values_tbl}{A data frame with values stored in a coded format}
+\item{values_tbl}{A data frame with values stored in a coded format.}
 
-\item{definitions}{A named list of named vectors to use for recoding variables.}
+\item{def_list}{A list of definition sets, likely produced by \code{\link{def_prep}()}.}
+
+\item{.default}{If supplied, all values not otherwise matched will be given this value.
+   If not supplied and if the replacements are the same type as the original values in .x,
+   unmatched values are not changed. If not supplied and if the replacements are not compatible,
+   unmatched values are replaced with NA.
+
+   .default must be either length 1 or the same length as .x.}
+
+\item{.missing}{If supplied, any missing values in .x will be replaced by this value. Must be either
+length 1 or the same length as .x.}
 }
 \value{
-A data frame with the same rows and columns as \code{values_tbl}, with columns recoded according to \code{definitions}
+A data frame with the same rows and columns as \code{values_tbl}, with columns recoded according to \code{def_recode}
 }
 \description{
-Recode all columns in a dataset using a definitions list
+Column names in \code{values_tbl} should match names in \code{def_list}
+}
+\examples{
+def_list <- tibble::tibble(variable   = c('A', 'A', 'B', 'B', 'C'),
+                           value      = c(1,   2,   1,   2,   1),
+                           definition = c('cat', 'dog', 'fred', 'george', 'lonely')) \%>\%
+  def_prep(variable, value, definition, drop_solos = FALSE)
+
+source_data <- tibble::tibble(ID = c('A1', 'A2', 'A3'),
+                              A  = c(1, 1, 2),
+                              B  = c(2, 1, 2),
+                              C  = c(1, 1, 1))
+
+def_recode_all(source_data, def_list)
 }
