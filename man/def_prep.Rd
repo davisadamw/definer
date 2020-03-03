@@ -24,7 +24,7 @@ def_prep(
 \item{drop_solos}{Optionally, logical identifying whether to exclude variables from the dictionary if they only have one unique value}
 }
 \value{
-
+Named list of vectors to use for recoding variables. Probably should be an S3 class.
 }
 \description{
 value map will be applied only when starting_value and ending_value are same

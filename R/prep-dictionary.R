@@ -10,7 +10,7 @@
 #' @param definition_col Unquoted name of column in `definitions_tbl` that stores replacement / "definition" values matched to `value_col`
 #' @param drop_solos Optionally, logical identifying whether to exclude variables from the dictionary if they only have one unique value
 #'
-#' @return
+#' @return Named list of vectors to use for recoding variables. Probably should be an S3 class.
 #' @export
 #'
 #' @examples
@@ -24,15 +24,23 @@ def_prep <- function(definitions_tbl,
                      definition_col,
                      drop_solos = TRUE) {
 
-  # first, create a nested
-  definitions_tbl %>%
+  # first, create a nested tibble with all the values for each variable grouped together
+  definitions_tbl_nested <- definitions_tbl %>%
     dplyr::select({{ variable_col }},
                   {{ value_col }},
                   {{ definition_col }}) %>%
     dplyr::group_by({{ variable_col }}) %>%
-    tidyr::nest(val_map_tbl = c({{ value_col }}, {{definition_col }})) %>%
-    dplyr::mutate(val_map = purrr::map(val_map_tbl, tibble::deframe)) %>%
-    dplyr::select(-val_map_tbl) %>%
+    tidyr::nest(val_map_tbl = c({{ value_col }}, {{definition_col }}))
+
+  # if drop_solos set to TRUE, remove all variables with a single unique value
+  if (drop_solos) {
+    definitions_tbl_nested <- definitions_tbl_nested %>%
+      dplyr::filter(purrr::map_int(.data$val_map_tbl, nrow) != 1L)
+  }
+
+  definitions_tbl_nested %>%
+    dplyr::mutate(val_map = purrr::map(.data$val_map_tbl, tibble::deframe)) %>%
+    dplyr::select(-.data$val_map_tbl) %>%
     tibble::deframe()
 
 }
