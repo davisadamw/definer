@@ -14,9 +14,9 @@
 #' @export
 #'
 #' @examples
-#' tibble(variable   = c('A', 'A', 'B', 'B', 'C'),
-#'            value      = c(1,   2,   1,   2,   1),
-#'            definition = c('cat', 'dog', 'fred', 'george', 'lonely')) %>%
+#' tibble::tibble(variable   = c('A', 'A', 'B', 'B', 'C'),
+#'                value      = c(1,   2,   1,   2,   1),
+#'                definition = c('cat', 'dog', 'fred', 'george', 'lonely')) %>%
 #'   def_prep(variable, value, definition)
 def_prep <- function(definitions_tbl,
                      variable_col,
