@@ -38,3 +38,18 @@ test_that("default and missing values are passed through to recode correctly", {
                c('lonely', 'another', 'other'))
 
 })
+
+test_that("arguments are passed through correctly from def_recode_pick to def_recode", {
+  dict_basic <- tibble::tibble(variable   = c('A', 'A', 'A'),
+                               value      = c(1,   2,   3),
+                               definition = c('cat', 'dog', 'fish'))
+
+  def_basic <- def_prep(dict_basic, variable, value, definition)
+
+  expect_equal(def_recode_pick(1:3, 'A', def_basic), c('cat', 'dog', 'fish'))
+  expect_equal(def_recode_pick(1:4, 'A', def_basic, .default = 'other'),
+               c('cat', 'dog', 'fish', 'other'))
+  expect_equal(def_recode_pick(c(1:3, NA), 'A', def_basic, .missing = 'other2'),
+               c('cat', 'dog', 'fish', 'other2'))
+  expect_equal(def_recode_pick(1:3, 'Z', def_basic), 1:3)
+})

@@ -36,11 +36,17 @@
 #'   def_prep(variable, value, definition)
 #'
 #' def_recode(1:3, definitions$A)
-#'
 #' # is equivalent to
+#' def_recode_pick(1:3, 'A', definitions)
+#'
+#' # or, using dplyr code directly:
 #' dplyr::recode(1:3, !!!definitions$A)
 #' # or
 #' dplyr::recode(1:3, 'cat', 'dog', 'fish')
+#'
+#' # Note that using an empty / NULL definition set returns the original vector unchanged
+#' def_recode(1:3, definitions$Z)
+#' def_recode_pick(1:3, 'Z', definitions)
 def_recode <- function(.x, definitions,
                        .default = NULL, .missing = NULL) {
   if (is.null(definitions)) return(.x)
