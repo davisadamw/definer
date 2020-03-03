@@ -2,9 +2,12 @@
 % Please edit documentation in R/run-recode.R
 \name{def_recode}
 \alias{def_recode}
+\alias{def_recode_pick}
 \title{Recode a single vector or return vector unchanged}
 \usage{
 def_recode(.x, definitions, .default = NULL, .missing = NULL)
+
+def_recode_pick(.x, def_name, def_list, .default = NULL, .missing = NULL)
 }
 \arguments{
 \item{.x}{A vector to modify}
@@ -21,6 +24,11 @@ produced by \code{\link{def_prep}()}. If this explicitly passed \code{null}, \co
 
 \item{.missing}{If supplied, any missing values in .x will be replaced by this value. Must be either
 length 1 or the same length as .x.}
+
+\item{def_name}{Scalar character matching a name in \code{def_list}.
+Which set of definitions should be pulled out of \code{def_list}?}
+
+\item{def_list}{A list of definition sets, likely produced by \code{\link{def_prep}()}.}
 }
 \value{
 Vector of same length and order as \code{.x}, but with values drawn from \code{definitions}
@@ -30,6 +38,24 @@ Replaces numeric or character values in \code{vector} with matching entries from
 vector or list provided in \code{definitions}.
 }
 \details{
+* \code{def_recode()} Recodes a vector based on a set of value definitions provided directly.
+  * \code{def_recode_pick()} Recodes a vector based on a set of value definitions chosen from a list of definition sets.
+
 This function is essentially equivalent to running \code{dplyr::\link[dplyr]{recode}(.x, !!!definitions)} but
 returns the original values if it is called with an empty definitions set.
+}
+\examples{
+definitions <- tibble::tibble(
+  variable   = c('A', 'A', 'A'),
+  value      = c(1,   2,   3),
+  definition = c('cat', 'dog', 'fish')
+) \%>\%
+  def_prep(variable, value, definition)
+
+def_recode(1:3, definitions$A)
+
+# is equivalent to
+dplyr::recode(1:3, !!!definitions$A)
+# or
+dplyr::recode(1:3, 'cat', 'dog', 'fish')
 }
