@@ -14,3 +14,5 @@ Description:
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+URL: https://github.com/davisadamw/definer
+BugReports: https://github.com/davisadamw/definer/issues
