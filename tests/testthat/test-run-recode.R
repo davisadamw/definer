@@ -7,19 +7,34 @@ test_that("recode works with definitions produced by def_prep", {
                                value      = c(1,   2,   1,   2,   1),
                                definition = c('cat', 'dog', 'fred', 'george', 'lonely'))
 
-  def_basic <- def_prep(dict_basic, variable, value, definition)
+  def_basic <- def_prep(dict_basic, variable, value, definition, drop_solos = FALSE)
 
   vals_basic <- tibble::tibble(A = 1:3,
                                B = c(1, 1, 2),
                                C = c(1, 1, 1))
 
-  expect_equal(def_recode(vals_basic$A, def_basic$A), c('cat', 'dog', 3))
+  # if .x includes values not present in your definitions, it should throw an error, but convert them to NAs if type would change
+  expect_warning(recodeA <- def_recode(vals_basic$A, def_basic$A), "Unreplaced values")
+  expect_equal(recodeA, c('cat', 'dog', NA))
   expect_equal(def_recode(vals_basic$B, def_basic$B), c('fred', 'fred', 'george'))
   expect_equal(def_recode(vals_basic$C, def_basic$C), rep('lonely', 3))
 
 })
 
 test_that("default and missing values are passed through to recode correctly", {
-  expect_equal(1,1)
+  dict_basic <- tibble::tibble(variable   = c('A', 'A', 'B', 'B', 'C'),
+                               value      = c(1,   2,   1,   2,   1),
+                               definition = c('cat', 'dog', 'fred', 'george', 'lonely'))
+
+  def_basic <- def_prep(dict_basic, variable, value, definition, drop_solos = FALSE)
+
+  vals_basic <- tibble::tibble(A = 1:3,
+                               B = c(1, 2, NA),
+                               C = c(1, 2, NA))
+
+  expect_equal(def_recode(vals_basic$A, def_basic$A, .default = 'fish'), c('cat', 'dog', 'fish'))
+  expect_equal(def_recode(vals_basic$B, def_basic$B, .missing = 'other'), c('fred', 'george', 'other'))
+  expect_equal(def_recode(vals_basic$C, def_basic$C, .default = 'another', .missing = 'other'),
+               c('lonely', 'another', 'other'))
 
 })
