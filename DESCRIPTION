@@ -1,0 +1,16 @@
+Package: definer
+Title: Makes it easy to apply field maps / survey data definitions to datasets with integer coding.
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Adam",
+           family = "Davis",
+           role = c("aut", "cre"),
+           email = "davisadamw@gmail.com",
+           comment = c(ORCID = "https://orcid.org/0000-0001-6324-6380"))
+Description: 
+    Survey data is often delivered with categorical variables coded as integers. 
+    This saves a lot of space but can make analysis pretty painful. This package helps 
+    you use a recode / definitions table to update values of variables painlessly.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
