@@ -2,5 +2,6 @@
 
 export("%>%")
 export(def_prep)
+export(def_recode)
 importFrom(dplyr,.data)
 importFrom(magrittr,"%>%")
