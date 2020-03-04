@@ -26,13 +26,13 @@ A very basic example of what this does:
 
 ``` r
 # create a definitions dataset linking coded values of various variables to what they represent
-def_list <- tibble(variable   = c('A', 'A', 'B', 'B', 'C'),
+def_list <- tibble(variable   = c("A", "A", "B", "B", "C"),
                    value      = c(1,   2,   1,   2,   1),
-                   definition = c('cat', 'dog', 'fred', 'george', 'lonely')) %>%
+                   definition = c("cat", "dog", "fred", "george", "lonely")) %>%
   def_prep(variable, value, definition, drop_solos = FALSE)
 
 # make a little source dataset to run this on
-source_data <- tibble(ID = c('A1', 'A2', 'A3'),
+source_data <- tibble(ID = c("A1", "A2", "A3"),
                       A  = c(1, 1, 2),
                       B  = c(2, 1, 2),
                       C  = c(1, 1, 1))
@@ -42,7 +42,7 @@ updated_values <- def_recode_all(source_data, def_list)
 
 # display the results side-by-side
 left_join(source_data, updated_values, 
-          by = 'ID', suffix = c('_old', '_new'))
+          by = "ID", suffix = c("_old", "_new"))
 #> # A tibble: 3 x 7
 #>   ID    A_old B_old C_old A_new B_new  C_new 
 #>   <chr> <dbl> <dbl> <dbl> <chr> <chr>  <chr> 
