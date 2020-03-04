@@ -9,12 +9,12 @@
 #' @export
 #'
 #' @examples
-#' def_list <- tibble::tibble(variable   = c('A', 'A', 'B', 'B', 'C'),
+#' def_list <- tibble::tibble(variable   = c("A", "A", "B", "B", "C"),
 #'                            value      = c(1,   2,   1,   2,   1),
-#'                            definition = c('cat', 'dog', 'fred', 'george', 'lonely')) %>%
+#'                            definition = c("cat", "dog", "fred", "george", "lonely")) %>%
 #'   def_prep(variable, value, definition, drop_solos = FALSE)
 #'
-#' source_data <- tibble::tibble(ID = c('A1', 'A2', 'A3'),
+#' source_data <- tibble::tibble(ID = c("A1", "A2", "A3"),
 #'                               A  = c(1, 1, 2),
 #'                               B  = c(2, 1, 2),
 #'                               C  = c(1, 1, 1))
