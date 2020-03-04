@@ -17,7 +17,12 @@ LazyData: true
 URL: https://github.com/davisadamw/definer
 BugReports: https://github.com/davisadamw/definer/issues
 Suggests: 
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    knitr,
+    rmarkdown,
+    readxl,
+    readr,
+    ggplot2
 Imports: 
     magrittr,
     dplyr,
@@ -25,3 +30,4 @@ Imports:
     tibble,
     purrr
 RoxygenNote: 7.0.2
+VignetteBuilder: knitr

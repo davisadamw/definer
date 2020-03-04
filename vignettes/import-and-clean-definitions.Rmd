@@ -1,0 +1,125 @@
+---
+title: "import-and-clean-definitions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{import-and-clean-definitions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, message=FALSE}
+library(dplyr)
+library(tibble)
+library(tidyr)
+library(purrr)
+library(readxl)
+library(ggplot2)
+library(stringr)
+library(definer)
+```
+
+First, locate the data. `definer` includes a set of definitions from the 2019 California Vehicle Survey, stored in an .xlsx format with one sheet per table in the survey table. More information about this survey can be found [on  the NREL website](https://www.nrel.gov/transportation/secure-transportation-data/tsdc-2019-california-vehicle-survey.html) and the definitions can be downloaded on their own [here](https://www.nrel.gov/transportation/secure-transportation-data/assets/docs/tsdc-2019-california-vehicle-survey-data-dictionary.xlsx), although a couple worksheet names were modified to get them to match the names of the survey files.
+```{r identify-file}
+
+vehicle_survey_defs_path <- definer_example("ca_vehicle_survey_2019_definitions.xlsx")
+
+```
+
+This dataset is structured so that there's one sheet for each table in the full survey dataset. The sheet names don't quite match the filenames, but since this vignette focuses on importing the data dictionary we won't worry about that here. First, we'll write a wrapper around `read_excel` to make it easy to load the sheets we want using one of the map functions from `purrr`.
+
+```{r load-raw-dictionary}
+# load the relevant definition sheets
+read_definitions <- function(sheet_name, source_file = vehicle_survey_defs_path) {
+  read_excel(source_file,
+             sheet_name,
+             col_names = c("var_name", "var_label", "value", "value_label"),
+             col_types = "text",
+             na = c("", "N/A"),
+             skip = 1) %>% 
+    mutate(source = sheet_name) %>% 
+    select(source, everything())
+}
+
+# load the definition sheets and put them in a single tibble, 
+# and add a column identifying which table they correspond to
+vehicle_survey_defs_raw <- excel_sheets(vehicle_survey_defs_path) %>%
+  map_dfr(read_definitions) %>% 
+  # then remove variables that come from the commercial vehicles part of the survey
+  filter(str_detect(source, "Res"))
+
+```
+
+Some of the variables in the survey files are IDs or actual numeric values, so not all of the entries in definitions file correspond to value maps. Fields that won't get information from the data dictionary are easy to identify because they have only a single row and have `NA` values in the `value` column. 
+
+Another issue we have to solve here is that the excel file is intended to be human readible, so in order to reduce clutter, `var_name` and `var_label` are only stored the first row of each variable definition. These values will have to be copied down to all rows for each variable.
+
+```{r clean-dictionary}
+vehicle_survey_defs_cl <- vehicle_survey_defs_raw %>% 
+  mutate(value = as.integer(value)) %>%
+  drop_na(value) %>% 
+  # since the variable name is given in the first row of each set and all other rows are NAs,
+  # the cumulative number of non-NA values identifies which variable each line corresponds to
+  group_by(var_grp = cumsum(!is.na(var_name))) %>% 
+  mutate(var_name  = first(var_name),
+         var_label = first(var_label)) %>% 
+  ungroup() %>%  
+  select(-var_grp)
+```
+
+Some variables appear in multiple tables.
+
+```{r duplicate-vars}
+vehicle_survey_defs_cl %>% 
+  distinct(source, var_name) %>% 
+  group_by(var_name) %>% 
+  filter(n() > 1)
+```
+
+Are there any that have different mappings in different tables?
+
+```{r check-duplicates}
+vehicle_survey_defs_cl %>% 
+  group_by(var_name, value) %>% 
+  summarize(unique_labels = length(unique(value_label))) %>% 
+  filter(unique_labels > 1)
+```
+
+Good! This means we can use the same dictionary to clean all of the tables!
+```{r remove-duplicates}
+vehicle_survey_defs_cl_nodupes <- vehicle_survey_defs_cl %>%
+  distinct(var_name, value, value_label)
+
+```
+
+Finally, let's convert this to a dictionary that we can use with the other functions in the `definer` package. ... Eventually this'll probably produce an S3 object (mainly so it can have its own print method), but I'm not quiiite there yet.
+```{r}
+vehicle_survey_dictionary <- def_prep(vehicle_survey_defs_cl_nodupes,
+                                      var_name, value, value_label)
+
+vehicle_survey_dictionary_lengths <- vehicle_survey_dictionary %>% 
+  map_int(length) %>% 
+  enframe() %>% 
+  count(value)
+
+vehicle_survey_dictionary_lengths %>% 
+  ggplot(aes(value, n)) + 
+  geom_bar(stat = "identity") +
+  scale_x_continuous(limits = c(0, max(vehicle_survey_dictionary_lengths$value) + 1),
+                     expand = c(0,0)) +
+  scale_y_continuous(limits = c(0, max(vehicle_survey_dictionary_lengths$n) + 5),
+                     expand = c(0,0)) +
+  labs(title = "Unique values in map by variable",
+       x = "Number of unique values",
+       y = "Number of variables") +
+  theme_bw()
+```
+
+
+
