@@ -32,8 +32,8 @@ to do this, convert it into a nested list
 ... list will have elements for columns in pums_hh, each one a named vector of potential values
 }
 \examples{
-tibble::tibble(variable   = c('A', 'A', 'B', 'B', 'C'),
+tibble::tibble(variable   = c("A", "A", "B", "B", "C"),
                value      = c(1,   2,   1,   2,   1),
-               definition = c('cat', 'dog', 'fred', 'george', 'lonely')) \%>\%
+               definition = c("cat", "dog", "fred", "george", "lonely")) \%>\%
   def_prep(variable, value, definition)
 }

@@ -22,7 +22,8 @@ Suggests:
     rmarkdown,
     readxl,
     readr,
-    ggplot2
+    ggplot2,
+    stringr
 Imports: 
     magrittr,
     dplyr,
