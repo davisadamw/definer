@@ -15,5 +15,5 @@ definer_example(path = NULL)
 }
 \examples{
 definer_example()
-definer_example("ca_vehicle_survey_definitions.xlsx")
+definer_example("ca_vehicle_survey_2019_definitions.xlsx")
 }
